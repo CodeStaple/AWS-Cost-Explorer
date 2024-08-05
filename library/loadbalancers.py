@@ -87,12 +87,12 @@ def get_data_transfer_metrics(load_balancer_arn, region):
         ],
         StartTime=start_time,
         EndTime=end_time,
-        Period=3600 * 24,  # Daily statistics
+        Period=3600 * 24,
         Statistics=['Sum']
     )
 
     total_bytes = sum(dp['Sum'] for dp in metrics['Datapoints'])
-    total_gb = total_bytes / (1024 ** 3)  # Convert bytes to GB
+    total_gb = total_bytes / (1024 ** 3)
     return total_gb
 
 def list_load_balancers():
@@ -125,10 +125,9 @@ def list_load_balancers():
                 print(f"No pricing data available for {lb_type} load balancer in {region_name}")
                 continue
 
-            # Get data transfer out in GB for the last 30 days
             data_out_gb = get_data_transfer_metrics(lb_arn, region_name)
             data_transfer_cost = data_transfer_cost_per_gb * data_out_gb
-            total_lb_cost = (hourly_cost * 720) + data_transfer_cost  # Assuming 720 hours per month
+            total_lb_cost = (hourly_cost * 720) + data_transfer_cost
             total_cost += total_lb_cost
 
             total_load_balancers += 1

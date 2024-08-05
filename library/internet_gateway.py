@@ -2,7 +2,6 @@ import boto3
 from datetime import datetime, timedelta
 import json
 
-# Mapping of AWS region codes to Pricing API locations
 REGION_NAME_MAPPING = {
     'us-east-1': 'US East (N. Virginia)',
     'us-east-2': 'US East (Ohio)',
@@ -21,7 +20,6 @@ REGION_NAME_MAPPING = {
     'ap-southeast-2': 'Asia Pacific (Sydney)',
     'ap-south-1': 'Asia Pacific (Mumbai)',
     'sa-east-1': 'South America (São Paulo)',
-    # Add more mappings as needed
 }
 
 def is_default_vpc(vpc_id, region):
@@ -84,12 +82,12 @@ def get_data_transfer_metrics(igw_id, region):
         ],
         StartTime=start_time,
         EndTime=end_time,
-        Period=3600 * 24,  # Daily statistics
+        Period=3600 * 24,
         Statistics=['Sum']
     )
 
     total_bytes = sum(dp['Sum'] for dp in metrics['Datapoints'])
-    total_gb = total_bytes / (1024 ** 3)  # Convert bytes to GB
+    total_gb = total_bytes / (1024 ** 3)
     return total_gb
 
 def list_internet_gateways():
@@ -115,19 +113,16 @@ def list_internet_gateways():
             igw_id = igw['InternetGatewayId']
             attached_vpcs = [attachment['VpcId'] for attachment in igw['Attachments']]
 
-            # Exclude Internet Gateways associated with default VPCs
             if any(is_default_vpc(vpc_id, region_name) for vpc_id in attached_vpcs):
                 print(f"Internet Gateway {igw_id} is associated with a default VPC and will be excluded from cost calculations.")
                 continue
 
-            # Exclude Internet Gateways with no attached VPCs
             if not attached_vpcs:
                 print(f"Internet Gateway {igw_id} has no attached VPCs and will be excluded from cost calculations.")
                 continue
 
             total_gateways += 1
 
-            # Get data transfer out in GB for the last 30 days
             data_out_gb = get_data_transfer_metrics(igw_id, region_name)
             data_transfer_cost = get_data_transfer_cost(region_name, data_out_gb)
             total_cost += data_transfer_cost

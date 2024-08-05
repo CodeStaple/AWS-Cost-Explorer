@@ -1,6 +1,5 @@
 import boto3
 
-# Mapping of AWS region codes to Pricing API locations
 REGION_NAME_MAPPING = {
     'us-east-1': 'US East (N. Virginia)',
     'us-east-2': 'US East (Ohio)',
@@ -19,7 +18,6 @@ REGION_NAME_MAPPING = {
     'ap-southeast-2': 'Asia Pacific (Sydney)',
     'ap-south-1': 'Asia Pacific (Mumbai)',
     'sa-east-1': 'South America (São Paulo)',
-    # Add more mappings as needed
 }
 
 def get_rds_instance_cost(instance_type, region, database_engine):
@@ -34,7 +32,7 @@ def get_rds_instance_cost(instance_type, region, database_engine):
         {'Type': 'TERM_MATCH', 'Field': 'instanceType', 'Value': instance_type},
         {'Type': 'TERM_MATCH', 'Field': 'location', 'Value': location},
         {'Type': 'TERM_MATCH', 'Field': 'databaseEngine', 'Value': database_engine},
-        {'Type': 'TERM_MATCH', 'Field': 'deploymentOption', 'Value': 'Single-AZ'},  # Default deployment option
+        {'Type': 'TERM_MATCH', 'Field': 'deploymentOption', 'Value': 'Single-AZ'},
     ]
 
     try:
@@ -45,8 +43,7 @@ def get_rds_instance_cost(instance_type, region, database_engine):
             print(f"No pricing data found for {instance_type} in {location}")
             return 0
 
-        # Parse the pricing information
-        price_item = eval(price_list[0])  # Converts JSON string to Python dict
+        price_item = eval(price_list[0])
         terms = price_item['terms']['OnDemand']
         for term in terms.values():
             price_dimensions = term['priceDimensions']
@@ -81,7 +78,7 @@ def calculate_rds_total_cost():
 
             if instance['DBInstanceStatus'] == 'available':
                 cost_per_hour = get_rds_instance_cost(instance_type, region, engine)
-                instance_cost = cost_per_hour * 24 * 30  # Cost for a month
+                instance_cost = cost_per_hour * 24 * 30
                 total_cost += instance_cost
 
                 print(f"RDS instance {db_instance_id} in {region} ({engine}) costs {instance_cost:.2f} per month")

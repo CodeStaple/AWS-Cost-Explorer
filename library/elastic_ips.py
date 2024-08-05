@@ -1,7 +1,6 @@
 import boto3
 import json
 
-# Mapping of AWS region codes to Pricing API locations
 REGION_NAME_MAPPING = {
     'us-east-1': 'US East (N. Virginia)',
     'us-east-2': 'US East (Ohio)',
@@ -20,14 +19,11 @@ REGION_NAME_MAPPING = {
     'ap-southeast-2': 'Asia Pacific (Sydney)',
     'ap-south-1': 'Asia Pacific (Mumbai)',
     'sa-east-1': 'South America (São Paulo)',
-    # Add more mappings as needed
 }
 
-# Pricing per hour for Elastic IPs
 EIP_COST_PER_HOUR = 0.005
 
 def get_elastic_ip_cost(region):
-    # Return the fixed cost for Elastic IPs
     return EIP_COST_PER_HOUR
 
 def calculate_elastic_ip_total_cost():
@@ -60,7 +56,7 @@ def calculate_elastic_ip_total_cost():
             allocation_id = address.get('AllocationId', 'Unknown')
             association_id = address.get('AssociationId', None)
 
-            monthly_cost = cost_per_hour * 24 * 30  # Assuming full month usage
+            monthly_cost = cost_per_hour * 24 * 30
             total_cost += monthly_cost
             status = "idle" if not association_id else "in-use"
             print(f"Elastic IP {allocation_id} ({status}) in {region_name} costs {monthly_cost:.2f} per month")

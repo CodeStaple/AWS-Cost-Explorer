@@ -48,8 +48,7 @@ def get_instance_cost(instance_type, region):
             print(f"No pricing data found for {instance_type} in {location}")
             return 0
 
-        # Parse the pricing information
-        price_item = eval(price_list[0])  # Converts JSON string to Python dict
+        price_item = eval(price_list[0])
         terms = price_item['terms']['OnDemand']
         for term in terms.values():
             price_dimensions = term['priceDimensions']
@@ -88,7 +87,7 @@ def calculate_total_cost():
 
                 if state == 'running':
                     cost_per_hour = get_instance_cost(instance_type, region_name)
-                    instance_cost = cost_per_hour * 24 * 30  # Cost for a month
+                    instance_cost = cost_per_hour * 24 * 30
                     total_cost += instance_cost
 
                     print(f"Instance {instance['InstanceId']} in {region_name} costs {instance_cost:.2f} per month")

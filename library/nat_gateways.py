@@ -1,7 +1,6 @@
 import boto3
 import json
 
-# Mapping of AWS region codes to Pricing API locations
 REGION_NAME_MAPPING = {
     'us-east-1': 'US East (N. Virginia)',
     'us-east-2': 'US East (Ohio)',
@@ -19,8 +18,7 @@ REGION_NAME_MAPPING = {
     'ap-southeast-1': 'Asia Pacific (Singapore)',
     'ap-southeast-2': 'Asia Pacific (Sydney)',
     'ap-south-1': 'Asia Pacific (Mumbai)',
-    'sa-east-1': 'South America (Sao Paulo)',  # Removed special character
-    # Add more mappings as needed
+    'sa-east-1': 'South America (Sao Paulo)',
 }
 
 def get_nat_gateway_cost(region):
@@ -44,7 +42,6 @@ def get_nat_gateway_cost(region):
             print(f"No pricing data found for NAT Gateways in {location}")
             return 0, 0
 
-        # Parse the pricing information
         price_item = json.loads(price_list[0])
         terms = price_item['terms']['OnDemand']
         hourly_cost = 0
@@ -59,8 +56,7 @@ def get_nat_gateway_cost(region):
         return hourly_cost, data_transfer_cost
     except Exception as e:
         print(f"Error fetching price for NAT Gateways in {location}: {e}")
-        # Fallback to default pricing if available
-        default_pricing = {'hourly': 0.045, 'data_transfer': 0.045}  # Example fallback values
+        default_pricing = {'hourly': 0.045, 'data_transfer': 0.045}
         return default_pricing['hourly'], default_pricing['data_transfer']
 
 def calculate_nat_gateway_total_cost():
@@ -89,12 +85,10 @@ def calculate_nat_gateway_total_cost():
             state = nat_gateway['State']
             total_nat_gateways += 1
 
-            # Assume NAT Gateway has been running for a full month (720 hours)
             monthly_hours = 720
             nat_cost = hourly_cost * monthly_hours
 
-            # Example data processed value in GB; replace with actual CloudWatch metric
-            data_processed_gb = 100  # Replace with actual data transfer metric
+            data_processed_gb = 100
             transfer_cost = data_transfer_cost * data_processed_gb
 
             total_nat_cost = nat_cost + transfer_cost

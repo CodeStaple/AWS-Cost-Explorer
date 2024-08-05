@@ -1,6 +1,5 @@
 import boto3
 
-# Mapping of AWS region codes to Pricing API locations
 REGION_NAME_MAPPING = {
     'us-east-1': 'US East (N. Virginia)',
     'us-east-2': 'US East (Ohio)',
@@ -19,15 +18,12 @@ REGION_NAME_MAPPING = {
     'ap-southeast-2': 'Asia Pacific (Sydney)',
     'ap-south-1': 'Asia Pacific (Mumbai)',
     'sa-east-1': 'South America (São Paulo)',
-    # Add more mappings as needed
 }
 
-# Default pricing in case the Pricing API does not return results
 DEFAULT_VOLUME_PRICING = {
-    'gp2': 0.10,  # USD per GB-month
+    'gp2': 0.10,
     'gp3': 0.08,
     'io1': 0.125,
-    # Add more volume types and their default prices as needed
 }
 
 def get_volume_cost(volume_type, region):
@@ -52,8 +48,7 @@ def get_volume_cost(volume_type, region):
             print(f"No pricing data found for {volume_type} in {location}")
             return DEFAULT_VOLUME_PRICING.get(volume_type, 0)
 
-        # Parse the pricing information
-        price_item = eval(price_list[0])  # Converts JSON string to Python dict
+        price_item = eval(price_list[0])
         terms = price_item['terms']['OnDemand']
         for term in terms.values():
             price_dimensions = term['priceDimensions']
